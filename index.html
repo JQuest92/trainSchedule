@@ -3,9 +3,17 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Time Keeper</title>
+    <title>Train Schedule</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <style>
+    
+        body {
+
+          background-color: azure;
+        }
+    
+    </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.8.5/firebase.js"></script>
@@ -27,8 +35,8 @@
 
         <div class="jumbotron jumbotron-fluid">
             <div class="container">
-              <h1 class="display-4">C.E.R.T.</h1>
-              <p class="lead">Comprehensive E-Repository of Trains</p>
+              <h1 class="display-4">Middle Tennessee Rails</h1>
+              <p class="lead">Everyone on I-24 wishes this were real.</p>
             </div>
         </div>
 
@@ -47,7 +55,7 @@
             </tbody>
         </table>
 
-        <form>
+        <form class="bg-light" >
             <div class="form-group">
               <label for="nameInput">Train Name:</label>
               <input type="text" class="form-control" id="nameInput" placeholder="Chattacotchie">
@@ -71,100 +79,5 @@
     </div>
 </body>
 
-<script>
-
-
-var database = firebase.database();
-
-
-
-$("#submitBttn").on("click", function(){
-
-    event.preventDefault();
-
-    var nameI = $("#nameInput").val().trim();
-    var destI = $("#destInput").val().trim();
-    var freqI = $("#freqInput").val().trim();
-    var dateI =  $("#dateInput").val().trim();
-
-
-
-
-
-
-
-
-
-
-
-    var schdl = {
-    name: nameI,
-    dest: destI,
-    date: dateI,
-    freq: freqI
-              };
-
-  database.ref().push(schdl);
-
-
-});
-
-
-
-database.ref().on("child_added", function(snapshot){
-
-    var nameI = snapshot.val().name;
-    var destI = snapshot.val().dest;
-    var dateI = snapshot.val().date;
-    var freqI = snapshot.val().freq;
-
-
-    // First Time (pushed back 1 year to make sure it comes before current time)
-    var firstTimeConverted = moment(dateI, "HH:mm").subtract(1, "years");
-    console.log(firstTimeConverted);
-
-    // Current Time
-    var currentTime = moment();
-    console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
-
-    // Difference between the times
-    var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
-    console.log("DIFFERENCE IN TIME: " + diffTime);
-
-    // Time apart (remainder)
-    var tRemainder = diffTime % freqI;
-    console.log(tRemainder);
-
-    // Minute Until Train
-    var tMinutesTillTrain = freqI - tRemainder;
-    console.log("MINUTES TILL TRAIN: " + tMinutesTillTrain);
-
-    // Next Train
-    var nextTrain = moment().add(tMinutesTillTrain, "minutes");
-    console.log("ARRIVAL TIME: " + moment(nextTrain).format("hh:mm"));
-
-    var tr = $("<tr>");
-    var td = $("<td>");
-    var td2 = $("<td>");
-    var td3 = $("<td>");
-    var td4 = $("<td>");
-    var td5 = $("<td>");
-
-    td.text(nameI);
-    td2.text(destI);
-    td3.text(freqI);
-    td4.text(nextTrain);
-    td5.text(tMinutesTillTrain);
-
-
-    tr.append(td);
-    tr.append(td2);
-    tr.append(td3);
-    tr.append(td4);
-    tr.append(td5);
-    $("#tBody").append(tr);
-});
-
-
-</script>
+<script src="js/main.js"></script>
 </html>
